@@ -19,7 +19,7 @@ mkdir -p $STANDARD_DISTRIB_DIR/upgrades/
 cp -R $DEV_DISTRIB_DIR/upgrades/* $STANDARD_DISTRIB_DIR/upgrades/
 
 # Dot env file
-cp $DEV_DISTRIB_DIR/.env $STANDARD_DISTRIB_DIR/
+[ -f $STANDARD_DISTRIB_DIR/.env ] || cp $DEV_DISTRIB_DIR/.env $STANDARD_DISTRIB_DIR/  # Holabe: never overwrite the project .env
 
 # Akeneo managed Kernel
 [ -d $STANDARD_DISTRIB_DIR/src ] && cp $DEV_DISTRIB_DIR/std-build/Kernel.php $STANDARD_DISTRIB_DIR/src

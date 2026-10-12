@@ -11,9 +11,23 @@ Akeneo no longer maintains the Community Edition. This fork keeps the version us
 | `main`       | Untouched mirror of upstream `main`. Do not build on it (see below).          |
 | `master`     | Untouched mirror of upstream `master`.                                       |
 
-Releases are tagged on `holabe/7.0` with calendar versions: `v2026.10.0`, `v2026.10.1`, ...
-`holabe/pim` requires `akeneo/pim-community-dev: ^2026.10.0`.
-Upstream `v7.0.x` tags also exist in this repository; never use them for our line.
+Releases are tagged on `holabe/7.0` as `v7.1.x` (first release: `v7.1.0`).
+
+- `7.1.x` patch releases: security and dependency updates.
+- `7.2.0` and up: bigger changes (e.g. base image / PHP upgrades). `holabe/pim` must opt in on purpose.
+- `holabe/pim` requires `akeneo/pim-community-dev: ~7.1.0` (any `7.1.x`, never `7.2`).
+
+Do not use other version schemes. Upstream `v7.0.x` tags and upstream's calendar tags (`v2026.x`,
+used on upstream `main`) also exist in this repository. A calendar version on our side could match
+an upstream `main` tag, and Composer would silently install upstream `main`.
+
+## Gotchas
+
+- `composer install` / `update` in `holabe/pim` runs `std-build/install-required-files.sh`. Up to
+  `v7.1.0` it copied this repository's `.env` over the project's `.env` (losing `REDIS_URL` etc.).
+  Since `v7.1.1` it only creates `.env` when the project has none.
+- A fresh core in `vendor/` loses the Webkul icon links. Run `docker/install-plugin-icons.sh` inside
+  the node container (the links are absolute paths), then `make front-packages`.
 
 ## Do not merge upstream `main`
 
@@ -39,6 +53,11 @@ Merging or rebasing onto `main` would remove these features. If we need somethin
 - `resolutions` force patched versions inside old dev tooling (react-scripts 4, cypress 6).
   `holabe/pim` has the same `resolutions` block in its root `package.json`, because yarn only reads
   resolutions from the workspace root. Keep both lists in sync.
+- `v7.1.1` (SH-3010): removed lockfiles that were never installed but showed up in the nightly
+  scan: `src/Oro/Bundle/ConfigBundle/front/yarn.lock` (that folder is a workspace of the root, yarn
+  ignores its own lock) and the design-system demo app `front-packages/akeneo-design-system/example`
+  (plus its steps in `.github/workflows/dsm-test.yml`). `install-required-files.sh` no longer
+  overwrites an existing `.env`.
 
 ## Known leftovers
 
